@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JMMFD 2026 Pro</title>
+    <title>JMMFD 2026 - Final Stable</title>
     <style>
         :root { --bg: #0a0a0a; --card: #161616; --text: #eee; --accent: #ffcc00; --danger: #ff4444; --border: #333; --input: #222; }
         body.light-mode { --bg: #f4f4f4; --card: #fff; --text: #111; --accent: #0056b3; --border: #ccc; --input: #fdfdfd; }
@@ -15,43 +15,50 @@
         main { display: grid; grid-template-columns: 1fr 140px; gap: 8px; padding: 8px; flex-grow: 1; overflow: hidden; }
         .entry-container { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
         .entry-box { background: var(--card); padding: 12px; border-radius: 6px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-        .grid-row { display: grid; grid-template-columns: 1.5fr 0.8fr 0.8fr 0.5fr 0.6fr 2fr; gap: 8px; align-items: end; }
+        .grid-row { display: grid; grid-template-columns: 1.2fr 0.7fr 0.7fr 0.5fr 0.5fr 1.5fr; gap: 8px; align-items: end; }
         .fld { display: flex; flex-direction: column; }
         label { font-size: 0.6rem; color: #888; margin-bottom: 3px; font-weight: bold; }
         input, select { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; font-size: 1rem; border-radius: 3px; text-transform: uppercase; font-family: monospace; width: 100%; box-sizing: border-box; }
-        .side-bar { display: flex; flex-direction: column; gap: 6px; }
-        .card-small { background: var(--card); padding: 10px; border-radius: 4px; border-left: 3px solid var(--accent); text-align: center; }
         .btn { border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 3px; font-size: 0.75rem; text-transform: uppercase; }
         .btn-main { background: var(--accent); color: #000; font-size: 1rem; margin-top: 5px; height: 45px; }
-        .btn-side { background: #333; color: #fff; width: 100%; border: 1px solid #444; }
+        .btn-side { background: #333; color: #fff; width: 100%; border: 1px solid #444; margin-bottom: 4px; }
         .log-area { background: var(--card); border-radius: 6px; border: 1px solid var(--border); overflow-y: auto; flex-grow: 1; }
         table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         th { background: #000; padding: 8px; text-align: left; position: sticky; top: 0; font-size: 0.65rem; color: var(--accent); border-bottom: 1px solid var(--border); }
         td { padding: 6px 8px; border-bottom: 1px solid var(--border); font-family: monospace; }
-        .dupe-tag { background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 3px; display: none; text-align: center; }
-        #setup { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .setup-win { background: var(--card); padding: 25px; border-radius: 8px; width: 300px; border: 1px solid var(--accent); }
-        kbd { background: #444; padding: 2px 4px; border-radius: 3px; font-size: 0.6rem; color: var(--accent); }
+        .mult-map { background: #000; padding: 10px; border-radius: 4px; display: flex; gap: 8px; font-size: 0.7rem; border: 1px solid var(--border); }
+        .mult-box { padding: 2px 6px; border-radius: 2px; background: #222; color: #555; }
+        .mult-active { background: var(--accent); color: #000; font-weight: bold; }
+        .ser-adj { background: none; border: none; color: #666; cursor: pointer; font-size: 1.2rem; font-weight: bold; padding: 0 5px; }
+        kbd { background: #444; padding: 1px 3px; border-radius: 2px; font-size: 0.55rem; color: var(--accent); }
+        #setup { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .setup-win { background: var(--card); padding: 25px; border-radius: 8px; width: 450px; border: 1px solid var(--accent); }
     </style>
 </head>
 <body>
 
 <div id="setup">
     <div class="setup-win">
-        <h3 style="margin:0 0 15px 0; color:var(--accent);">JMMFD SETUP</h3>
-        <div class="fld" style="margin-bottom:10px;"><label>My Call</label><input type="text" id="set-call" placeholder="VK3ABC"></div>
-        <div class="fld" style="margin-bottom:10px;"><label>My Grid</label><input type="text" id="set-grid" placeholder="QF22"></div>
-        <div class="fld" style="margin-bottom:20px;"><label>Category</label><select id="set-type"><option value="PORTABLE">Portable</option><option value="HOME">Home</option></select></div>
-        <button onclick="saveSetup()" class="btn btn-main" style="width:100%;">START</button>
+        <h2 style="text-align:center; color:var(--accent);">JMMFD SETUP</h2>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+            <div class="fld"><label>My Call</label><input type="text" id="set-call" placeholder="VK3ABC"></div>
+            <div class="fld"><label>My Grid</label><input type="text" id="set-grid" placeholder="QF22"></div>
+            <div class="fld"><label>Power</label><select id="set-pwr"><option value="LOW">LOW</option><option value="HIGH">HIGH</option><option value="QRP">QRP</option></select></div>
+            <div class="fld"><label>Type</label><select id="set-type"><option value="PORTABLE">PORTABLE</option><option value="FIXED">HOME</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px;"><label>Operators</label><input type="text" id="set-ops"></div>
+        <div class="fld" style="margin-bottom:10px;"><label>Email</label><input type="text" id="set-email" style="text-transform:none;"></div>
+        <div class="fld" style="margin-bottom:20px;"><label>Postal Address</label><input type="text" id="set-addr" style="text-transform:none;"></div>
+        <button onclick="saveSetup()" class="btn btn-main" style="width:100%;">START LOGGER</button>
     </div>
 </div>
 
 <header>
-    <div style="font-size: 0.9rem; font-weight:900;">JMMFD 2026 <span id="hdr-id" style="font-weight:normal; opacity:0.5; font-size:0.7rem; margin-left:10px;"></span></div>
+    <div style="font-weight:bold;">JMMFD 2026 <span id="hdr-id" style="opacity:0.5; font-size:0.7rem; margin-left:10px;"></span></div>
     <div class="stat-group">
         <div class="stat"><div class="stat-val" id="ui-blk">#1</div><div class="stat-lbl">Block</div></div>
         <div class="stat"><div class="stat-val" id="ui-tmr">00:00</div><div class="stat-lbl">End</div></div>
-        <div class="stat"><div class="stat-val" id="ui-scr" style="min-width:60px;">0</div><div class="stat-lbl">Score</div></div>
+        <div class="stat"><div class="stat-val" id="ui-scr">0</div><div class="stat-lbl">Score</div></div>
     </div>
 </header>
 
@@ -60,21 +67,34 @@
         <div class="entry-box">
             <div class="grid-row">
                 <div class="fld"><label>Callsign</label><input type="text" id="in-call" onfocus="handleCallFocus(this)" oninput="handleCallInput()"></div>
-                <div class="fld"><label>Band <kbd>Alt+B</kbd></label><select id="in-band"><option>40M</option><option>20M</option><option>80M</option><option>15M</option><option>10M</option><option>2M</option><option>70CM</option></select></div>
-                <div class="fld"><label>Mode <kbd>Alt+M</kbd></label><select id="in-mode" onchange="updRST()"><option value="PH">PH</option><option value="CW">CW</option><option value="DG">DIGI</option></select></div>
-                <div class="fld"><label>RST</label><input type="text" id="in-rst" value="59" maxlength="3"></div>
-                <div class="fld"><label>Serial</label><input type="text" id="in-ser" placeholder="000" maxlength="4"></div>
-                <div class="fld"><label>Notes / Name <kbd>Alt+N</kbd></label><input type="text" id="in-note" placeholder="..." style="text-transform:none; font-family:sans-serif;"></div>
+                <div class="fld"><label>Band <kbd>Mod+B</kbd></label>
+                    <select id="in-band">
+                        <option value="160M">160M</option><option value="80M">80M</option><option value="40M" selected>40M</option>
+                        <option value="20M">20M</option><option value="15M">15M</option><option value="10M">10M</option>
+                        <option value="6M">6M</option><option value="2M">2M</option><option value="70CM">70CM</option>
+                        <option value="23CM">23CM</option>
+                    </select>
+                </div>
+                <div class="fld"><label>Mode <kbd>Mod+M</kbd></label><select id="in-mode" onchange="updRST()"><option value="PH">PH</option><option value="CW">CW</option><option value="DG">DIGI</option></select></div>
+                <div class="fld"><label>RST</label><input type="text" id="in-rst" value="59"></div>
+                <div class="fld"><label>Serial</label><input type="text" id="in-ser"></div>
+                <div class="fld"><label>Notes / Name</label><input type="text" id="in-note" style="text-transform:none;"></div>
             </div>
-            <div id="ui-dupe" class="dupe-tag">!! DUPLICATE STATION !!</div>
-            <button onclick="logQSO()" class="btn btn-main" id="btn-log">LOG QSO (ENTER)</button>
+            <button onclick="logQSO()" class="btn btn-main">LOG QSO (ENTER)</button>
         </div>
 
         <div class="log-area">
             <table>
-                <thead><tr><th>UTC</th><th>CALL</th><th>BAND</th><th>MODE</th><th>SENT</th><th>RCVD</th><th>PTS</th><th>NOTES</th><th></th></tr></thead>
+                <thead><tr><th>UTC</th><th>CALL</th><th>BAND</th><th>MODE</th><th>SENT</th><th>RCVD</th><th>PTS</th><th>NOTES</th></tr></thead>
                 <tbody id="log-body"></tbody>
             </table>
+        </div>
+
+        <div class="mult-map" id="ui-map">
+            <span style="color:#888; font-weight:bold; margin-right:5px;">VK MULTS:</span>
+            <div class="mult-box" id="m1">1</div><div class="mult-box" id="m2">2</div><div class="mult-box" id="m3">3</div><div class="mult-box" id="m4">4</div>
+            <div class="mult-box" id="m5">5</div><div class="mult-box" id="m6">6</div><div class="mult-box" id="m7">7</div><div class="mult-box" id="m8">8</div>
+            <div class="mult-box" id="m9">9</div><div class="mult-box" id="m0">0</div>
         </div>
     </section>
 
@@ -82,51 +102,55 @@
         <div class="card-small"><div class="stat-lbl">Multipliers</div><div id="ui-mul" style="font-size:1.4rem; font-weight:bold; color:var(--accent);">0</div></div>
         <div class="card-small">
             <div class="stat-lbl">Next Sent</div>
-            <div style="display:flex; justify-content:center; align-items:center; gap:5px;">
-                <button onclick="adjSer(-1)" style="background:none; border:none; color:#555; cursor:pointer;">-</button>
-                <span id="ui-nxt" style="font-size:1.1rem; font-weight:bold; color:#fff;">001</span>
-                <button onclick="adjSer(1)" style="background:none; border:none; color:#555; cursor:pointer;">+</button>
+            <div style="display:flex; justify-content:center; align-items:center;">
+                <button class="ser-adj" onclick="adjSer(-1)">-</button>
+                <span id="ui-nxt" style="font-size:1.1rem; font-weight:bold; color:#fff; cursor:pointer;" onclick="setSer()">001</span>
+                <button class="ser-adj" onclick="adjSer(1)">+</button>
             </div>
         </div>
         <button onclick="toggleTheme()" class="btn btn-side">Day/Night</button>
-        <button onclick="exportCab()" class="btn btn-side">Export <kbd>Alt+X</kbd></button>
-        <button onclick="newContest()" class="btn btn-side" style="background:#311; color:#f66; font-size:0.6rem; margin-top:auto;">Reset Log</button>
+        <button onclick="exportCab()" class="btn btn-side">Export Log <kbd>Mod+X</kbd></button>
+        <button onclick="exportCSV()" class="btn btn-side">Export CSV <kbd>Mod+C</kbd></button>
+        <button onclick="newContest()" class="btn btn-side" style="background:#311; color:#f66; margin-top:20px;">Reset Log</button>
     </aside>
 </main>
 
 <script>
-    let log = JSON.parse(localStorage.getItem('jmmfd_log_v6')) || [];
-    let state = JSON.parse(localStorage.getItem('jmmfd_cfg_v6')) || { call: "", grid: "", type: "PORTABLE", next: 1 };
-    let nameDir = JSON.parse(localStorage.getItem('jmmfd_names_v6')) || {}; 
+    let log = JSON.parse(localStorage.getItem('jmmfd_log_v12')) || [];
+    let state = JSON.parse(localStorage.getItem('jmmfd_cfg_v12')) || { call: "", grid: "", type: "PORTABLE", next: 1, pwr: "LOW", ops: "", email: "", addr: "" };
+    let nameDir = JSON.parse(localStorage.getItem('jmmfd_names_v12')) || {}; 
     const contestStart = new Date(Date.UTC(2026, 2, 21, 1, 0, 0));
 
     function save() { 
-        localStorage.setItem('jmmfd_log_v6', JSON.stringify(log)); 
-        localStorage.setItem('jmmfd_cfg_v6', JSON.stringify(state));
-        localStorage.setItem('jmmfd_names_v6', JSON.stringify(nameDir));
+        localStorage.setItem('jmmfd_log_v12', JSON.stringify(log)); 
+        localStorage.setItem('jmmfd_cfg_v12', JSON.stringify(state));
+        localStorage.setItem('jmmfd_names_v12', JSON.stringify(nameDir));
     }
     
     function saveSetup() {
         state.call = document.getElementById('set-call').value.toUpperCase().trim();
         state.grid = document.getElementById('set-grid').value.toUpperCase().trim();
         state.type = document.getElementById('set-type').value;
+        state.pwr = document.getElementById('set-pwr').value;
+        state.ops = document.getElementById('set-ops').value;
+        state.email = document.getElementById('set-email').value;
+        state.addr = document.getElementById('set-addr').value;
         if (!state.call) return alert("Callsign Required");
         save(); location.reload();
     }
     
+    function adjSer(n) { state.next = Math.max(1, state.next + n); save(); updateUI(); }
+    function setSer() { let n = prompt("Set next serial:", state.next); if(n) { state.next = parseInt(n); save(); updateUI(); }}
     function handleCallFocus(el) { if(!el.value) { el.value = "VK"; setTimeout(() => el.setSelectionRange(2, 2), 10); } }
 
     function handleCallInput() {
         const val = document.getElementById('in-call').value.toUpperCase();
-        const isD = log.some(q => q.call === val && q.band === document.getElementById('in-band').value && q.mode === document.getElementById('in-mode').value && q.block === getBlock());
-        document.getElementById('ui-dupe').style.display = isD ? 'block' : 'none';
         if (nameDir[val]) document.getElementById('in-note').value = nameDir[val];
     }
 
     function newContest() { if(confirm("Clear log?")) { localStorage.clear(); location.reload(); }}
     function getBlock() { let diff = new Date() - contestStart; return Math.max(1, Math.floor(diff / 10800000) + 1); }
     function updRST() { document.getElementById('in-rst').value = document.getElementById('in-mode').value === 'CW' ? '599' : '59'; }
-    function adjSer(n) { state.next = Math.max(1, state.next + n); save(); updateUI(); }
 
     function logQSO() {
         const callEl = document.getElementById('in-call');
@@ -137,66 +161,70 @@
 
         if (note) nameDir[call] = note;
         log.unshift({
-            id: Date.now(), utc: new Date().toISOString().substr(11, 5), date: new Date().toISOString().substr(0, 10),
+            id: Date.now(), utc: new Date().toISOString().substr(11, 5).replace(':',''), date: new Date().toISOString().substr(0, 10),
             call, band: document.getElementById('in-band').value, mode: document.getElementById('in-mode').value,
             sent: state.next.toString().padStart(3, '0'), rcvd: rcvd.padStart(3, '0'), rst: document.getElementById('in-rst').value,
             block: getBlock(), note: note, prefix: call.match(/^([A-Z0-9]{1,3}[0-9])/)?.[1] || "DX"
         });
         state.next++; save(); updateUI();
-        
-        // Reset and Focus
-        callEl.value = ""; 
-        document.getElementById('in-ser').value = "";
-        document.getElementById('in-note').value = ""; 
-        callEl.focus(); 
-    }
-
-    function editQSO(id) {
-        const idx = log.findIndex(q => q.id === id); const q = log[idx];
-        document.getElementById('in-call').value = q.call; document.getElementById('in-ser').value = q.rcvd;
-        document.getElementById('in-note').value = q.note || "";
-        state.next = parseInt(q.sent); log.splice(idx, 1); save(); updateUI();
-        document.getElementById('in-call').focus();
+        callEl.value = ""; document.getElementById('in-ser').value = ""; document.getElementById('in-note').value = ""; callEl.focus(); 
     }
 
     function updateUI() {
         document.getElementById('ui-nxt').innerText = state.next.toString().padStart(3, '0');
         document.getElementById('log-body').innerHTML = log.map(q => {
             const pts = (q.mode === 'PH') ? (state.type === 'PORTABLE' ? 2 : 1) : (state.type === 'PORTABLE' ? 4 : 2);
-            return `<tr><td>${q.utc}</td><td><b>${q.call}</b></td><td>${q.band}</td><td>${q.mode}</td><td>${q.sent}</td><td>${q.rcvd}</td><td style="color:var(--accent)">${pts}</td><td style="opacity:0.7; font-size:0.7rem;">${q.note || ''}</td><td><button onclick="editQSO(${q.id})" style="background:none; border:1px solid #444; color:#666; cursor:pointer; font-size:0.5rem;">ED</button></td></tr>`;
+            return `<tr><td>${q.utc}</td><td><b>${q.call}</b></td><td>${q.band}</td><td>${q.mode}</td><td>${q.sent}</td><td>${q.rcvd}</td><td>${pts}</td><td>${q.note || ''}</td></tr>`;
         }).join('');
         
         let ptsTotal = 0, mults = new Set();
+        document.querySelectorAll('.mult-box').forEach(b => b.classList.remove('mult-active'));
+
         log.forEach(q => {
             ptsTotal += (q.mode === 'PH') ? (state.type === 'PORTABLE' ? 2 : 1) : (state.type === 'PORTABLE' ? 4 : 2);
             mults.add(`${q.block}-${q.band}-${q.mode}-${q.prefix}`);
+            if(q.block === getBlock() && q.call.startsWith("VK")) {
+                let digit = q.call.match(/VK(\d)/)?.[1];
+                if(digit) document.getElementById('m'+digit).classList.add('mult-active');
+            }
         });
         document.getElementById('ui-scr').innerText = (ptsTotal * (mults.size || 1)).toLocaleString();
         document.getElementById('ui-mul').innerText = mults.size;
     }
 
     function exportCab() {
-        let cab = `START-OF-LOG: 3.0\nCONTEST: JMMFD\nCALLSIGN: ${state.call}\nLOCATION: ${state.grid}\nCATEGORY: ${state.type}\n`;
-        log.slice().reverse().forEach(q => cab += `QSO: 7000 ${q.mode.padEnd(2)} ${q.date} ${q.utc.replace(':','')} ${state.call.padEnd(10)} 59 ${q.sent.padEnd(4)} ${q.call.padEnd(10)} 59 ${q.rcvd}\n`);
+        let cab = `START-OF-LOG: 3.0\nCONTEST: WIA-JMMFD\nCALLSIGN: ${state.call}\nLOCATION: ${state.grid}\nCATEGORY-POWER: ${state.pwr}\nCATEGORY-STATION: ${state.type}\nOPERATORS: ${state.ops || state.call}\nADDRESS: ${state.addr}\nEMAIL: ${state.email}\n`;
+        log.slice().reverse().forEach(q => {
+            let f = q.band.replace('M','').replace('CM','000');
+            if(f === '160') f = '1800'; if(f === '80') f = '3500'; if(f === '40') f = '7000'; if(f === '20') f = '14000';
+            cab += `QSO: ${f.padStart(5)} ${q.mode.padEnd(2)} ${q.date} ${q.utc} ${state.call.padEnd(10)} ${q.rst} ${q.sent.padEnd(4)} ${q.call.padEnd(10)} ${q.rst} ${q.rcvd}\n`;
+        });
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([cab + "END-OF-LOG:"], {type:'text/plain'})); a.download = `${state.call}.log`; a.click();
+    }
+
+    function exportCSV() {
+        let csv = "UTC,Date,Callsign,Band,Mode,Sent,Received,RST,Block,Points,Note\n";
+        log.slice().reverse().forEach(q => {
+            const pts = (q.mode === 'PH') ? (state.type === 'PORTABLE' ? 2 : 1) : (state.type === 'PORTABLE' ? 4 : 2);
+            csv += `${q.utc},${q.date},${q.call},${q.band},${q.mode},${q.sent},${q.rcvd},${q.rst},${q.block},${pts},"${q.note || ''}"\n`;
+        });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = `${state.call}_analysis.csv`; a.click();
     }
 
     function toggleTheme() { document.body.classList.toggle('light-mode'); }
     
-    // Keyboard Listeners
     window.addEventListener('keydown', e => { 
+        const isMod = e.altKey || e.metaKey;
         if(e.key === 'Enter') logQSO();
-        if(e.altKey && e.key === 'b') { e.preventDefault(); document.getElementById('in-band').focus(); }
-        if(e.altKey && e.key === 'm') { e.preventDefault(); document.getElementById('in-mode').focus(); }
-        if(e.altKey && e.key === 'n') { e.preventDefault(); document.getElementById('in-note').focus(); }
-        if(e.altKey && e.key === 's') { e.preventDefault(); logQSO(); }
-        if(e.altKey && e.key === 'x') { e.preventDefault(); exportCab(); }
+        if(isMod && e.key.toLowerCase() === 'b') { e.preventDefault(); document.getElementById('in-band').focus(); }
+        if(isMod && e.key.toLowerCase() === 'm') { e.preventDefault(); document.getElementById('in-mode').focus(); }
+        if(isMod && e.key.toLowerCase() === 'x') { e.preventDefault(); exportCab(); }
+        if(isMod && e.key.toLowerCase() === 'c') { e.preventDefault(); exportCSV(); }
     });
 
     setInterval(() => {
         let diff = (new Date() - contestStart) % 10800000;
-        let ms = 10800000 - diff;
-        document.getElementById('ui-tmr').innerText = new Date(ms).toISOString().substr(14, 5);
+        document.getElementById('ui-tmr').innerText = new Date(10800000 - diff).toISOString().substr(14, 5);
         document.getElementById('ui-blk').innerText = `#${getBlock()}`;
     }, 1000);
 
