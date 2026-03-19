@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JMMFD 2026 - Final Stable</title>
+    <title>JMMFD 2026 - Master Station Log</title>
     <style>
         :root { --bg: #0a0a0a; --card: #161616; --text: #eee; --accent: #ffcc00; --danger: #ff4444; --border: #333; --input: #222; }
         body.light-mode { --bg: #f4f4f4; --card: #fff; --text: #111; --accent: #0056b3; --border: #ccc; --input: #fdfdfd; }
@@ -19,6 +19,7 @@
         .fld { display: flex; flex-direction: column; }
         label { font-size: 0.6rem; color: #888; margin-bottom: 3px; font-weight: bold; }
         input, select { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; font-size: 1rem; border-radius: 3px; text-transform: uppercase; font-family: monospace; width: 100%; box-sizing: border-box; }
+        input.dupe-alert { border: 2px solid var(--danger); color: var(--danger); font-weight: bold; }
         .btn { border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 3px; font-size: 0.75rem; text-transform: uppercase; }
         .btn-main { background: var(--accent); color: #000; font-size: 1rem; margin-top: 5px; height: 45px; }
         .btn-side { background: #333; color: #fff; width: 100%; border: 1px solid #444; margin-bottom: 4px; }
@@ -46,7 +47,7 @@
             <div class="fld"><label>Power</label><select id="set-pwr"><option value="LOW">LOW</option><option value="HIGH">HIGH</option><option value="QRP">QRP</option></select></div>
             <div class="fld"><label>Type</label><select id="set-type"><option value="PORTABLE">PORTABLE</option><option value="FIXED">HOME</option></select></div>
         </div>
-        <div class="fld" style="margin-bottom:10px;"><label>Operators</label><input type="text" id="set-ops"></div>
+        <div class="fld" style="margin-bottom:10px;"><label>Operators</label><input type="text" id="set-ops" placeholder="VK3XXX VK3YYY"></div>
         <div class="fld" style="margin-bottom:10px;"><label>Email</label><input type="text" id="set-email" style="text-transform:none;"></div>
         <div class="fld" style="margin-bottom:20px;"><label>Postal Address</label><input type="text" id="set-addr" style="text-transform:none;"></div>
         <button onclick="saveSetup()" class="btn btn-main" style="width:100%;">START LOGGER</button>
@@ -68,14 +69,14 @@
             <div class="grid-row">
                 <div class="fld"><label>Callsign</label><input type="text" id="in-call" onfocus="handleCallFocus(this)" oninput="handleCallInput()"></div>
                 <div class="fld"><label>Band <kbd>Mod+B</kbd></label>
-                    <select id="in-band">
+                    <select id="in-band" onchange="handleCallInput()">
                         <option value="160M">160M</option><option value="80M">80M</option><option value="40M" selected>40M</option>
                         <option value="20M">20M</option><option value="15M">15M</option><option value="10M">10M</option>
                         <option value="6M">6M</option><option value="2M">2M</option><option value="70CM">70CM</option>
                         <option value="23CM">23CM</option>
                     </select>
                 </div>
-                <div class="fld"><label>Mode <kbd>Mod+M</kbd></label><select id="in-mode" onchange="updRST()"><option value="PH">PH</option><option value="CW">CW</option><option value="DG">DIGI</option></select></div>
+                <div class="fld"><label>Mode <kbd>Mod+M</kbd></label><select id="in-mode" onchange="updRST(); handleCallInput();"><option value="PH">PH</option><option value="CW">CW</option><option value="DG">DIGI</option></select></div>
                 <div class="fld"><label>RST</label><input type="text" id="in-rst" value="59"></div>
                 <div class="fld"><label>Serial</label><input type="text" id="in-ser"></div>
                 <div class="fld"><label>Notes / Name</label><input type="text" id="in-note" style="text-transform:none;"></div>
@@ -116,15 +117,15 @@
 </main>
 
 <script>
-    let log = JSON.parse(localStorage.getItem('jmmfd_log_v12')) || [];
-    let state = JSON.parse(localStorage.getItem('jmmfd_cfg_v12')) || { call: "", grid: "", type: "PORTABLE", next: 1, pwr: "LOW", ops: "", email: "", addr: "" };
-    let nameDir = JSON.parse(localStorage.getItem('jmmfd_names_v12')) || {}; 
+    let log = JSON.parse(localStorage.getItem('jmmfd_log_v14')) || [];
+    let state = JSON.parse(localStorage.getItem('jmmfd_cfg_v14')) || { call: "", grid: "", type: "PORTABLE", next: 1, pwr: "LOW", ops: "", email: "", addr: "" };
+    let nameDir = JSON.parse(localStorage.getItem('jmmfd_names_v14')) || {}; 
     const contestStart = new Date(Date.UTC(2026, 2, 21, 1, 0, 0));
 
     function save() { 
-        localStorage.setItem('jmmfd_log_v12', JSON.stringify(log)); 
-        localStorage.setItem('jmmfd_cfg_v12', JSON.stringify(state));
-        localStorage.setItem('jmmfd_names_v12', JSON.stringify(nameDir));
+        localStorage.setItem('jmmfd_log_v14', JSON.stringify(log)); 
+        localStorage.setItem('jmmfd_cfg_v14', JSON.stringify(state));
+        localStorage.setItem('jmmfd_names_v14', JSON.stringify(nameDir));
     }
     
     function saveSetup() {
@@ -143,9 +144,23 @@
     function setSer() { let n = prompt("Set next serial:", state.next); if(n) { state.next = parseInt(n); save(); updateUI(); }}
     function handleCallFocus(el) { if(!el.value) { el.value = "VK"; setTimeout(() => el.setSelectionRange(2, 2), 10); } }
 
+    function isDupe(call, band, mode) {
+        return log.some(q => q.call === call && q.band === band && q.mode === mode && q.block === getBlock());
+    }
+
     function handleCallInput() {
-        const val = document.getElementById('in-call').value.toUpperCase();
+        const val = document.getElementById('in-call').value.toUpperCase().trim();
+        const band = document.getElementById('in-band').value;
+        const mode = document.getElementById('in-mode').value;
+        const el = document.getElementById('in-call');
+
         if (nameDir[val]) document.getElementById('in-note').value = nameDir[val];
+        
+        if (val.length > 3 && isDupe(val, band, mode)) {
+            el.classList.add('dupe-alert');
+        } else {
+            el.classList.remove('dupe-alert');
+        }
     }
 
     function newContest() { if(confirm("Clear log?")) { localStorage.clear(); location.reload(); }}
@@ -154,20 +169,25 @@
 
     function logQSO() {
         const callEl = document.getElementById('in-call');
+        const band = document.getElementById('in-band').value;
+        const mode = document.getElementById('in-mode').value;
         const call = callEl.value.toUpperCase().trim();
         const rcvd = document.getElementById('in-ser').value.trim();
         const note = document.getElementById('in-note').value.trim();
+
         if (!call || call === "VK" || !rcvd) return;
+        if (isDupe(call, band, mode)) { alert("DUPLICATE: Already worked in this block."); return; }
 
         if (note) nameDir[call] = note;
         log.unshift({
             id: Date.now(), utc: new Date().toISOString().substr(11, 5).replace(':',''), date: new Date().toISOString().substr(0, 10),
-            call, band: document.getElementById('in-band').value, mode: document.getElementById('in-mode').value,
-            sent: state.next.toString().padStart(3, '0'), rcvd: rcvd.padStart(3, '0'), rst: document.getElementById('in-rst').value,
-            block: getBlock(), note: note, prefix: call.match(/^([A-Z0-9]{1,3}[0-9])/)?.[1] || "DX"
+            call, band, mode, sent: state.next.toString().padStart(3, '0'), rcvd: rcvd.padStart(3, '0'), 
+            rst: document.getElementById('in-rst').value, block: getBlock(), note: note, 
+            prefix: call.match(/^([A-Z0-9]{1,3}[0-9])/)?.[1] || "DX"
         });
         state.next++; save(); updateUI();
         callEl.value = ""; document.getElementById('in-ser').value = ""; document.getElementById('in-note').value = ""; callEl.focus(); 
+        callEl.classList.remove('dupe-alert');
     }
 
     function updateUI() {
